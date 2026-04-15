@@ -5,9 +5,7 @@ import { Link, useParams } from "react-router-dom";
 
 import { API_BASE_URL } from "../utils/api";
 
-  
-  
-
+const Comments = () => {
   const [allComments, setAllComments] = useState([]);
   const [loading, setLoading] = useState(false);
 
