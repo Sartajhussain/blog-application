@@ -37,7 +37,7 @@ const Home = () => {
    const fetchBlogs = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:8000/api/v1/blog/feed",
+        `${API_BASE_URL}/api/v1/blog/feed`,
         { withCredentials: true }
       );
 

@@ -3,6 +3,7 @@ import { FaHeart, FaRegHeart, FaTrash, FaPencilAlt, FaEllipsisV } from "react-ic
 import axios from "axios";
 import toast from "react-hot-toast";
 import userimg from "../assets/userprofile.png";
+import { API_BASE_URL } from "../utils/api";
 
 const CommentItem = ({ comment, currentUserId, onCommentUpdated, onCommentDeleted }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -29,7 +30,7 @@ const CommentItem = ({ comment, currentUserId, onCommentUpdated, onCommentDelete
 
     try {
       const { data } = await axios.put(
-        `http://localhost:8000/api/v1/comment/${comment._id}`,
+        `${API_BASE_URL}/api/v1/comment/${comment._id}`,
         { text: editText },
         { withCredentials: true }
       );
@@ -51,7 +52,7 @@ const CommentItem = ({ comment, currentUserId, onCommentUpdated, onCommentDelete
 
     try {
       const { data } = await axios.delete(
-        `http://localhost:8000/api/v1/comment/${comment._id}`,
+        `${API_BASE_URL}/api/v1/comment/${comment._id}`,
         { withCredentials: true }
       );
 

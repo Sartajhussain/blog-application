@@ -87,7 +87,7 @@ const UpdateBlog = () => {
     try {
       setLoading(true);
       const { data } = await axios.put(
-        `http://localhost:8000/api/v1/blog/${id}`,
+        `${API_BASE_URL}/api/v1/blog/${id}`,
         formData,
         { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -152,7 +152,7 @@ const UpdateBlog = () => {
       setDeleteLoading(true);
 
       const { data } = await axios.delete(
-        `http://localhost:8000/api/v1/blog/${id}`,
+        `${API_BASE_URL}/api/v1/blog/${id}`,
         { withCredentials: true }
       );
 
