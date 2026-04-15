@@ -1,6 +1,6 @@
 import React from "react";
 import BlogList from "./BlogList";
-import BlogSideBar from "./BlogSidBar";
+import BlogSideBar from "./BlogSideBar";
 
 const RecentBlog = ({ blogs = [] }) => {
   return (
