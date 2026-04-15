@@ -16,6 +16,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 8000;
+const NODE_ENV = process.env.NODE_ENV || "development";
 
 // ✅ CORS Configuration - Allow production domain
 const allowedOrigins = [
@@ -37,18 +38,19 @@ app.use(cors({
       return callback(null, true);
     }
 
-    // Allow any origin for development (can be restricted for production)
-    if (process.env.NODE_ENV === "development") {
+    // In development, allow all origins
+    if (NODE_ENV === "development") {
       return callback(null, true);
     }
 
-    // Production: log blocked origin but allow for now to debug
-    console.log("⚠️ CORS request from origin:", origin);
-    callback(null, true); // Allow for debugging
+    // In production, still allow for debugging - can be restricted later
+    console.log("ℹ️ CORS request from:", origin);
+    callback(null, true);
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["Set-Cookie"],
 }));
 
 // ✅ Middlewares
