@@ -15,40 +15,9 @@ const __dirname = path.resolve();
 
 const PORT = process.env.PORT || 8000;
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:3000",
-  "http://127.0.0.1:5173",
-  "http://127.0.0.1:5174",
-];
-
-// ✅ CORS Configuration
+// ✅ CORS (PRODUCTION SAFE)
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl requests, etc)
-    if (!origin) return callback(null, true);
-
-    const allowedList = [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://localhost:3000",
-      "http://127.0.0.1:5173",
-      "http://127.0.0.1:5174",
-    ];
-
-    if (allowedList.includes(origin)) {
-      return callback(null, true);
-    }
-
-    // For development, allow all localhost variations
-    if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
-      return callback(null, true);
-    }
-
-    // Block other origins
-    callback(new Error("CORS not allowed"));
-  },
+  origin: true,
   credentials: true,
 }));
 
@@ -62,16 +31,20 @@ app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/blog", blogRoutes);
 app.use("/api/v1/comment", commentRoutes);
 
-// ✅ Static frontend serve
-app.use(express.static(path.join(__dirname, "frontend/dist")));
+// ✅ Serve Frontend (VERY IMPORTANT FIX)
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-// ✅ SPA fallback
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "frontend/dist/index.html"));
+// ✅ SPA Fallback (React Router)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 
-// ✅ Start server
+// ✅ Start Server
 app.listen(PORT, async () => {
-  await connectDb();
-  console.log(`✅ Server running on port ${PORT}`);
+  try {
+    await connectDb();
+    console.log(`✅ Server running on port ${PORT}`);
+  } catch (error) {
+    console.error("❌ DB Connection Failed:", error);
+  }
 });
