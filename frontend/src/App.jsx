@@ -30,30 +30,39 @@ const App = () => {
       <Navbar />
 
       <Routes>
-        {/* Public Routes */}
+
+        {/* ================= PUBLIC ROUTES ================= */}
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
 
-        {/* Blog Routes */}
+        {/* ================= BLOG ROUTES ================= */}
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/blog-feed" element={<PublicFeed />} />
         <Route path="/view-blog/:blogId" element={<ViewBlog />} />
 
-        {/* Users */}
+        {/* ================= USERS ================= */}
         <Route path="/AllUser" element={<AllUser />} />
         <Route path="/AllUserProfile" element={<AllUserProfile />} />
 
-        {/* Dashboard Nested Routes */}
+        {/* ================= DASHBOARD ================= */}
         <Route path="/dashboard" element={<Dashboard />}>
+
+          {/* DEFAULT REDIRECT (IMPORTANT) */}
+          <Route index element={<Profile />} />
+
           <Route path="profile" element={<Profile />} />
           <Route path="blog" element={<Blog />} />
           <Route path="comments" element={<Comments />} />
           <Route path="create-blogs" element={<CreateBlogs />} />
+
+          {/* ✅ IMPORTANT FIX (MATCH PARAM NAME) */}
           <Route path="write-blog/:blogId" element={<UpdateBlog />} />
+
         </Route>
+
       </Routes>
 
       <Footer />
