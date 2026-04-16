@@ -35,6 +35,30 @@ body{
   padding: 0;
   
 }
+/* DARK MODE */
+.dark .jodit-container {
+  background: #020817 !important;
+  border: 1px solid #1e293b !important;
+}
+
+.dark .jodit-toolbar__box {
+  background: #020817 !important;
+}
+
+.dark .jodit-wysiwyg {
+  background: #020817 !important;
+  color: #ffffff !important;
+}
+
+/* LIGHT MODE */
+.jodit-container {
+  background: #ffffff;
+}
+
+.jodit-wysiwyg {
+  background: #ffffff;
+  color: #000000;
+}
 @media (max-width: 600px) {
   .sign_up {
     margin-top: 50px;
