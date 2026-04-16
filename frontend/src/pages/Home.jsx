@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import Autoplay from "embla-carousel-autoplay";
 import { Badge } from "../components/ui/badge";
 
-
 import RecentBlog from "../components/RecentBlog";
 import { Card, CardContent } from "../components/ui/card";
 import {
@@ -21,10 +20,10 @@ import AllUser from "./AllUser";
 const Home = () => {
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [api, setApi] = React.useState();
   const [current, setCurrent] = React.useState(0);
   const { user } = useSelector((state) => state.auth);
+
   const carouselBlogs = blogs.slice(0, 6);
 
   const formatDate = (date) => {
@@ -36,7 +35,8 @@ const Home = () => {
     });
   };
 
-   const fetchBlogs = async () => {
+  // ✅ FIX: ensure author is properly fetched
+  const fetchBlogs = async () => {
     try {
       const { data } = await axios.get(
         `${API_BASE_URL}/api/v1/blog/feed`,
@@ -51,7 +51,7 @@ const Home = () => {
     }
   };
 
-   useEffect(() => {
+  useEffect(() => {
     fetchBlogs();
   }, []);
 
@@ -82,19 +82,21 @@ const Home = () => {
         >
           <CarouselContent className="-ml-0">
 
-           {carouselBlogs.slice(0, 6).map((item) => (
-            
+            {carouselBlogs.map((item) => (
               <CarouselItem key={item._id} className="basis-full">
                 <Card className="rounded-2xl overflow-hidden border-none shadow-none">
                   <CardContent className="p-0">
 
                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-10">
 
+                      {/* LEFT SIDE */}
                       <div className="md:w-1/2 p-4 md:p-12">
 
                         <Badge className="mb-3 bg-black text-white">
-                          By {item.author?.firstName} {item.author?.lastName} •{" "}
-                          {formatDate(item.createdAt)}
+                          By{" "}
+                          {item.author?.firstName || "Unknown"}{" "}
+                          {item.author?.lastName || "Author"} •{" "}
+                          {item.createdAt ? formatDate(item.createdAt) : "No Date"}
                         </Badge>
 
                         <h1 className="text-3xl md:text-5xl font-bold capitalize">
@@ -116,6 +118,7 @@ const Home = () => {
 
                       </div>
 
+                      {/* RIGHT SIDE */}
                       <div className="md:w-1/2 w-full">
                         <img
                           src={item.thumbnail}
@@ -133,12 +136,8 @@ const Home = () => {
 
           </CarouselContent>
 
-          <CarouselPrevious
-            className="left-2 cursor-pointer md:left-4 bg-white dark:text-black shadow-[rgba(0,0,0,0.35)_0px_5px_15px] border-none"
-          />
-          <CarouselNext
-            className="right-2 cursor-pointer md:right-4 bg-white dark:text-black shadow-[rgba(0,0,0,0.35)_0px_5px_15px] border-none"
-          />
+          <CarouselPrevious className="left-2 cursor-pointer md:left-4 bg-white dark:text-black shadow-[rgba(0,0,0,0.35)_0px_5px_15px] border-none" />
+          <CarouselNext className="right-2 cursor-pointer md:right-4 bg-white dark:text-black shadow-[rgba(0,0,0,0.35)_0px_5px_15px] border-none" />
         </Carousel>
 
         <div className="flex justify-center gap-2 mt-6">
@@ -147,7 +146,7 @@ const Home = () => {
               key={index}
               onClick={() => api?.scrollTo(index)}
               className={`h-2 w-2 rounded-full transition-all 
-      ${current === index ? "bg-black w-3" : "bg-gray-300"}`}
+              ${current === index ? "bg-black w-3" : "bg-gray-300"}`}
             />
           ))}
         </div>
