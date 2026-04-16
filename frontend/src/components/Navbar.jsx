@@ -43,16 +43,19 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const searchResults =
-    search.trim() === ""
-      ? []
-      : blog?.filter((b) =>
-        b.title?.toLowerCase().includes(search.toLowerCase())
+const searchResults =
+  !search.trim()
+    ? []
+    : (blog || []).filter((b) =>
+        (b.title || "")
+          .toLowerCase()
+          .includes(search.trim().toLowerCase())
       );
-  const handleClick = (id) => {
-    setSearch("");          // 🔥 dropdown hide
-    navigate(`/view-blog/${id}`);
-  };
+
+const handleClick = (id) => {
+  setSearch("");
+  navigate(`/view-blog/${id}`);
+};
 
 
   const Logout = async () => {
