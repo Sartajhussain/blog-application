@@ -41,7 +41,7 @@ const AllUserProfile = () => {
      window.scrollTo(0, 0);
    }, [selectedUser]);
   return (
-    <div className="min-h-screen pt-20 pb-24 md:pb-0 md:pt-0 bg-gray-50 dark:bg-gray-900 py-10 px-4 md:px-10">
+    <div className="min-h-screen pt-10 pb-24 md:pb-0 md:pt-0 bg-gray-50 dark:bg-gray-900 py-10 px-4 md:px-10">
       <h2 className="text-4xl mt-20 font-bold text-center text-gray-900 dark:text-white mb-10">
         Total User's  {users.length}
         <hr className="w-1/3 border-t-4 border-gray-600 mx-auto mt-4" />
