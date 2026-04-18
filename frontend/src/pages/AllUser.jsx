@@ -28,7 +28,7 @@ const AllUser = () => {
 
     const plugin = useRef(
         Autoplay({
-            delay: 4000,
+            delay: 6000,
             stopOnInteraction: false,
         })
     );
@@ -128,122 +128,121 @@ const AllUser = () => {
             </div>
 
             {/* MODAL */}
-            {isModalOpen && selectedUser && (
-                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+           {isModalOpen && selectedUser && (
+  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-3 overflow-y-auto">
 
-                    <div className="bg-white dark:bg-slate-800 w-full max-w-5xl rounded-3xl px-6 py-8 relative text-gray-900 dark:text-white">
+    <div className="bg-white dark:bg-slate-800 w-full max-w-5xl rounded-3xl px-4 md:px-6 py-6 md:py-8 relative text-gray-900 dark:text-white max-h-[90vh] overflow-y-auto">
 
-                        {/* CLOSE */}
-                        <button
-                            onClick={() => setIsModalOpen(false)}
-                            className="absolute top-4 right-4 text-2xl text-gray-700 dark:text-white"
-                        >
-                            &times;
-                        </button>
+      {/* CLOSE */}
+      <button
+        onClick={() => setIsModalOpen(false)}
+        className="absolute top-3 right-3 text-xl md:text-2xl text-gray-700 dark:text-white"
+      >
+        &times;
+      </button>
 
-                        <div className="flex flex-col md:flex-row gap-10">
+      <div className="flex flex-col md:flex-row gap-6 md:gap-10">
 
-                            {/* LEFT */}
-                            <div className="w-full md:w-1/3 flex flex-col items-center text-center">
+        {/* LEFT */}
+        <div className="w-full md:w-1/3 flex flex-col items-center text-center">
 
-                                <img
-                                    src={selectedUser.profilePic || userimg}
-                                    alt="profile"
-                                    className="w-32 h-32 rounded-full object-cover border-4 border-gray-300 dark:border-gray-600"
-                                    onError={(e) => (e.target.src = userimg)}
-                                />
+          <img
+            src={selectedUser.profilePic || userimg}
+            alt="profile"
+            className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-gray-300 dark:border-gray-600"
+            onError={(e) => (e.target.src = userimg)}
+          />
 
-                                <h2 className="text-2xl font-semibold mt-4 capitalize text-gray-900 dark:text-white">
-                                    {selectedUser.firstName} {selectedUser.lastName}
-                                </h2>
+          <h2 className="text-lg md:text-2xl font-semibold mt-3 capitalize text-gray-900 dark:text-white">
+            {selectedUser.firstName} {selectedUser.lastName}
+          </h2>
 
-                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    <a href={`mailto:${selectedUser.email}`}>
-                                        {selectedUser.email}
-                                    </a>
-                                </p>
+          <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 break-all">
+            <a href={`mailto:${selectedUser.email}`}>
+              {selectedUser.email}
+            </a>
+          </p>
 
-                                {/* SOCIALS */}
-                                <div className="flex gap-4 mt-5 text-gray-700 dark:text-gray-300 text-xl">
+          {/* SOCIALS */}
+          <div className="flex gap-3 mt-4 text-gray-700 dark:text-gray-300 text-lg md:text-xl">
 
-                                    {selectedUser.instagram && (
-                                        <a href={selectedUser.instagram} target="_blank">
-                                            <FiInstagram />
-                                        </a>
-                                    )}
-
-                                    {selectedUser.linkedin && (
-                                        <a href={selectedUser.linkedin} target="_blank">
-                                            <FiLinkedin />
-                                        </a>
-                                    )}
-
-                                    {selectedUser.github && (
-                                        <a href={selectedUser.github} target="_blank">
-                                            <FiGithub />
-                                        </a>
-                                    )}
-
-                                    {selectedUser.facebook && (
-                                        <a href={selectedUser.facebook} target="_blank">
-                                            <FiFacebook />
-                                        </a>
-                                    )}
-
-                                </div>
-                            </div>
-
-                            {/* RIGHT */}
-                            <div className="w-full md:w-2/3">
-
-                                <h2 className="text-3xl font-bold capitalize text-gray-900 dark:text-white">
-                                    {selectedUser.firstName} {selectedUser.lastName}
-                                </h2>
-
-                                <p className="mt-4 text-gray-600 dark:text-gray-300">
-                                    {selectedUser.bio || "No bio available"}
-                                </p>
-
-                                {/* STATS */}
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-
-                                    <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl text-center">
-                                        <h3 className="font-bold text-gray-900 dark:text-white">
-                                            {selectedUser.totalViews || 0}
-                                        </h3>
-                                        <p className="text-gray-600 dark:text-gray-300">Total Views</p>
-                                    </div>
-
-                                    <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl text-center">
-                                        <h3 className="font-bold text-gray-900 dark:text-white">
-                                            {selectedUser.totalBlogs || 0}
-                                        </h3>
-                                        <p className="text-gray-600 dark:text-gray-300">Blogs</p>
-                                    </div>
-
-                                    <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl text-center">
-                                        <h3 className="font-bold text-gray-900 dark:text-white">
-                                            {selectedUser.comments || 0}
-                                        </h3>
-                                        <p className="text-gray-600 dark:text-gray-300">Comments</p>
-                                    </div>
-
-                                    <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl text-center">
-                                        <h3 className="font-bold text-gray-900 dark:text-white">
-                                            {selectedUser.likes || 0}
-                                        </h3>
-                                        <p className="text-gray-600 dark:text-gray-300">Likes</p>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-                </div>
+            {selectedUser.instagram && (
+              <a href={selectedUser.instagram} target="_blank">
+                <FiInstagram />
+              </a>
             )}
+
+            {selectedUser.linkedin && (
+              <a href={selectedUser.linkedin} target="_blank">
+                <FiLinkedin />
+              </a>
+            )}
+
+            {selectedUser.github && (
+              <a href={selectedUser.github} target="_blank">
+                <FiGithub />
+              </a>
+            )}
+
+            {selectedUser.facebook && (
+              <a href={selectedUser.facebook} target="_blank">
+                <FiFacebook />
+              </a>
+            )}
+
+          </div>
+        </div>
+
+        {/* RIGHT */}
+        <div className="w-full md:w-2/3">
+
+          <h2 className="text-xl md:text-3xl font-bold capitalize text-gray-900 dark:text-white">
+            {selectedUser.firstName} {selectedUser.lastName}
+          </h2>
+
+          <p className="mt-3 text-sm md:text-base text-gray-600 dark:text-gray-300">
+            {selectedUser.bio || "No bio available"}
+          </p>
+
+          {/* STATS */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-6 md:mt-8">
+
+            <div className="p-3 md:p-4 bg-gray-100 dark:bg-gray-700 rounded-xl text-center">
+              <h3 className="font-bold text-sm md:text-base text-gray-900 dark:text-white">
+                {selectedUser.totalViews || 0}
+              </h3>
+              <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300">Views</p>
+            </div>
+
+            <div className="p-3 md:p-4 bg-gray-100 dark:bg-gray-700 rounded-xl text-center">
+              <h3 className="font-bold text-sm md:text-base text-gray-900 dark:text-white">
+                {selectedUser.totalBlogs || 0}
+              </h3>
+              <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300">Blogs</p>
+            </div>
+
+            <div className="p-3 md:p-4 bg-gray-100 dark:bg-gray-700 rounded-xl text-center">
+              <h3 className="font-bold text-sm md:text-base text-gray-900 dark:text-white">
+                {selectedUser.comments || 0}
+              </h3>
+              <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300">Comments</p>
+            </div>
+
+            <div className="p-3 md:p-4 bg-gray-100 dark:bg-gray-700 rounded-xl text-center">
+              <h3 className="font-bold text-sm md:text-base text-gray-900 dark:text-white">
+                {selectedUser.likes || 0}
+              </h3>
+              <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300">Likes</p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+)}
 
         </div>
     );

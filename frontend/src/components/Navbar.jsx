@@ -413,7 +413,7 @@ border border-gray-200 dark:border-gray-700
           <div className="flex items-center gap-3"
             onClick={() => {
               setIsOpen(false);
-              navigate( user ? "/dashboard/profile" : "/login");
+              navigate(user ? "/dashboard/profile" : "/login");
             }}
 
           >
@@ -429,9 +429,14 @@ border border-gray-200 dark:border-gray-700
                   : "Guest User"}
               </p>
 
-              <p className="text-xs text-gray-500">
-                {user ? "Welcome back 👋" : "Please login"}
-              </p>
+              <div className="flex items-center gap-2">
+                <a
+                  href={`mailto:${user?.email}`}
+                  className="text-xs text-gray-500 hover:underline truncate max-w-[160px]"
+                >
+                  {user?.email}
+                </a>
+              </div>
             </div>
           </div>
 

@@ -54,7 +54,7 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const res = await axios.get(
-        `${API_BASE_URL}/api/v1/user/profile`,
+          `${API_BASE_URL}/api/v1/user/profile`,
           { withCredentials: true }
         );
 
@@ -273,7 +273,7 @@ px-4 md:px-8 py-12">
             </h2>
 
             <form className="space-y-4" onSubmit={submitHandler}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                 <input placeholder="First Name" className="input" name="firstName" value={input.firstName} onChange={changeEventHandler} />
                 <input type="text" placeholder="Last Name" className="input" name="lastName" value={input.lastName} onChange={changeEventHandler} />
               </div>
@@ -282,31 +282,63 @@ px-4 md:px-8 py-12">
 
               <textarea rows="2" placeholder="About you..." className="input resize-none" name="bio" value={input.bio} onChange={changeEventHandler} />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                 <input className="input" placeholder="Instagram URL" name="instagram" value={input.instagram} onChange={changeEventHandler} />
                 <input className="input" placeholder="LinkedIn URL" name="linkedin" value={input.linkedin} onChange={changeEventHandler} />
                 <input className="input" placeholder="GitHub URL" name="github" value={input.github} onChange={changeEventHandler} />
                 <input className="input" placeholder="Facebook URL" name="facebook" value={input.facebook} onChange={changeEventHandler} />
               </div>
 
-              <div className="flex justify-between items-center">
-                <input type="file" className="w-full text-sm file:px-4 file:py-2 file:rounded-full file:border file:border-gray-300 dark:file:border-gray-600 file:bg-black dark:file:bg-white file:text-white dark:file:text-black hover:file:bg-gray-800 dark:hover:file:bg-gray-200 cursor-pointer" name="file" onChange={fileHnadler} />
+              <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
 
-                <div className="flex justify-end gap-4 pt-4">
-                  <button type="button" onClick={() => setOpen(false)} className="px-5 py-2 rounded-full border border-gray-600 dark:border-gray-500 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-800 cursor-pointer">
+                {/* FILE INPUT */}
+                <input
+                  type="file"
+                  name="file"
+                  onChange={fileHnadler}
+                  className="w-full text-sm 
+    file:px-3 file:py-2 
+    file:rounded-full 
+    file:border file:border-gray-300 
+    dark:file:border-gray-600 
+    file:bg-black dark:file:bg-white 
+    file:text-white dark:file:text-black 
+    hover:file:bg-gray-800 dark:hover:file:bg-gray-200 
+    cursor-pointer"
+                />
+
+                {/* BUTTONS */}
+                <div className="flex justify-end gap-3 w-full md:w-auto">
+
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="px-4 py-2 text-sm rounded-full 
+      border border-gray-600 dark:border-gray-500 
+      text-gray-600 dark:text-gray-300 
+      hover:bg-gray-200 dark:hover:bg-slate-800"
+                  >
                     Cancel
                   </button>
 
-                  <button type="submit" className="px-6 py-2 rounded-full cursor-pointer bg-black dark:bg-white text-white dark:text-black flex items-center gap-2 hover:bg-gray-800 dark:hover:bg-gray-200 transition">
+                  <button
+                    type="submit"
+                    className="px-5 py-2 text-sm rounded-full 
+      bg-black dark:bg-white 
+      text-white dark:text-black 
+      flex items-center gap-2 
+      hover:bg-gray-800 dark:hover:bg-gray-200"
+                  >
                     {loading ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                         wait...
+                        wait...
                       </>
                     ) : (
                       "Save"
                     )}
                   </button>
+
                 </div>
               </div>
             </form>
