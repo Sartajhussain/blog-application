@@ -44,16 +44,13 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const searchResults =
-    !search.trim()
+    search.trim() === ""
       ? []
-      : (blog || []).filter((b) =>
-        (b.title || "")
-          .toLowerCase()
-          .includes(search.trim().toLowerCase())
+      : blog?.filter((b) =>
+        b.title?.toLowerCase().includes(search.toLowerCase())
       );
-
   const handleClick = (id) => {
-    setSearch("");
+    setSearch("");          // 🔥 dropdown hide
     navigate(`/view-blog/${id}`);
   };
 
@@ -365,7 +362,7 @@ border border-gray-200 dark:border-gray-700">
           </Link>
 
           {/* Profile */}
-          {user && user._id ? (
+          {user ? (
             <Link
               to="/dashboard/profile"
               className="flex flex-col items-center text-[11px] text-gray-600 dark:text-gray-300 active:scale-95 transition"

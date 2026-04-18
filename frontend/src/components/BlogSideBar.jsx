@@ -1,51 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { Badge } from "../components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { API_BASE_URL } from "../utils/api";
-import { setBlog } from "../redux/blogSlice";
-import userimg from "../assets/userprofile.png";
 
 const BlogSideBar = () => {
   const [email, setEmail] = useState("");
+  const { blog } = useSelector((store) => store.blog);
+  const { user } = useSelector((state) => state.auth);
   const [selectedCategory, setSelectedCategory] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const blog = useSelector((store) => store.blog?.blog || []);
-  const user = useSelector((state) => state.auth?.user);
+  console.log("BLOG DATA:", blog);
 
-  // ✅ FETCH BLOGS (MAIN FIX)
-  const getBlogs = async () => {
-    try {
-      const res = await axios.get(
-        `${API_BASE_URL}/api/v1/blog`,
-        { withCredentials: true }
-      );
+  // ✅ safe categories (error avoid)
+  const categories = blog?.length
+    ? [...new Set(blog.map((item) => item.category))]
+    : [];
 
-      if (res.data.success) {
-        dispatch(setBlog(res.data.blogs || []));
-      }
-    } catch (error) {
-      console.log("SIDEBAR BLOG ERROR:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (!blog || blog.length === 0) {
-      getBlogs();
-    }
-  }, []);
-
-  // ✅ categories
-  const categories = [...new Set(blog.map((b) => b?.category).filter(Boolean))];
-
-  // ✅ suggested blogs
-  const suggestedBlogs = blog
-    .filter((b) => b?._id && b?.title)
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 4);
+  // ✅ suggested blogs safe
+  const suggestedBlogs = blog?.length
+    ? [...blog].sort(() => 0.5 - Math.random()).slice(0, 4)
+    : [];
 
   return (
     <div className="w-full md:w-[300px] bg-white dark:bg-gray-800 p-4 md:p-5 rounded-lg shadow md:block">
@@ -61,13 +36,15 @@ const BlogSideBar = () => {
             <Badge
               key={index}
               onClick={() => setSelectedCategory(item)}
-              className="cursor-pointer rounded-md px-3 py-1 dark:bg-white dark:text-black capitalize bg-black text-white"
+              className="cursor-pointer rounded-md px-3 py-1 dark:bg-white dark:text-black capitalize bg-black text-white hover:bg-black hover:text-white"
             >
               {item}
             </Badge>
           ))
         ) : (
-          <p className="text-sm text-gray-400">No categories found</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            No categories found
+          </p>
         )}
       </div>
 
@@ -87,13 +64,13 @@ const BlogSideBar = () => {
             placeholder="Your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900"
+            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
             required
           />
 
           <button
             type="submit"
-            className="bg-black dark:bg-white px-5 py-2 rounded-lg text-white dark:text-black"
+            className="bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-200 transition px-5 py-2 rounded-lg text-white dark:text-black font-medium"
           >
             Subscribe
           </button>
@@ -108,9 +85,9 @@ const BlogSideBar = () => {
 
         <div className="flex flex-col gap-3">
           {suggestedBlogs.length > 0 ? (
-            suggestedBlogs.map((item) => (
+            suggestedBlogs.map((item, index) => (
               <div
-                key={item._id}
+                key={index}
                 className="flex gap-3 items-center cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 p-2 rounded"
                 onClick={() => {
                   if (user) {
@@ -121,26 +98,23 @@ const BlogSideBar = () => {
                 }}
               >
                 <img
-                  src={item.thumbnail || userimg}
-                  alt={item.title}
+                  src={item?.thumbnail || ""}
+                  alt={item?.title}
                   className="w-14 h-14 object-cover rounded"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = userimg;
-                  }}
                 />
 
                 <p className="text-sm font-medium text-gray-800 dark:text-gray-200 line-clamp-2">
-                  {item.title}
+                  {item?.title}
                 </p>
               </div>
             ))
           ) : (
-            <p className="text-sm text-gray-400">No suggested blogs</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              No blogs available
+            </p>
           )}
         </div>
       </div>
-
     </div>
   );
 };

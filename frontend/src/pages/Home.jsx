@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux"; // ✅ ADD
 import Autoplay from "embla-carousel-autoplay";
 import { Badge } from "../components/ui/badge";
 
@@ -17,8 +17,13 @@ import {
 import { API_BASE_URL } from "../utils/api";
 import AllUser from "./AllUser";
 
+// ✅ ADD
+import { setBlog } from "../redux/blogSlice";
+
 const Home = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch(); // ✅ ADD
+
   const [blogs, setBlogs] = useState([]);
   const [api, setApi] = React.useState();
   const [current, setCurrent] = React.useState(0);
@@ -35,7 +40,7 @@ const Home = () => {
     });
   };
 
-  // ✅ FIX: ensure author is properly fetched
+  // ✅ FIX: Redux + Local dono me save
   const fetchBlogs = async () => {
     try {
       const { data } = await axios.get(
@@ -44,7 +49,10 @@ const Home = () => {
       );
 
       if (data?.success) {
-        setBlogs(data.blogs || []);
+        const blogsData = data.blogs || [];
+
+        setBlogs(blogsData);      // local state
+        dispatch(setBlog(blogsData)); // 🔥 REDUX ME SAVE
       }
     } catch (err) {
       console.error("FETCH BLOG ERROR:", err);
@@ -89,7 +97,6 @@ const Home = () => {
 
                     <div className="flex flex-col md:flex-row items-center gap-4 md:gap-10">
 
-                      {/* LEFT SIDE */}
                       <div className="md:w-1/2 p-4 md:p-12">
 
                         <Badge className="mb-3 bg-black text-white">
@@ -118,7 +125,6 @@ const Home = () => {
 
                       </div>
 
-                      {/* RIGHT SIDE */}
                       <div className="md:w-1/2 w-full">
                         <img
                           src={item.thumbnail}

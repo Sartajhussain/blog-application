@@ -8,6 +8,7 @@ import {
   FiGithub,
 } from "react-icons/fi";
 import { API_BASE_URL } from "../utils/api";
+import userimg from "../assets/userprofile.png";
 
 const AllUserProfile = () => {
   const [users, setUsers] = useState([]);
@@ -37,18 +38,18 @@ const AllUserProfile = () => {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
- useEffect(() => {
-     window.scrollTo(0, 0);
-   }, [selectedUser]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [selectedUser]);
   return (
     <div className="min-h-screen pt-10 pb-24 md:pb-0 md:pt-0 bg-gray-50 dark:bg-gray-900 py-10 px-4 md:px-10">
-      <h2 className="text-4xl mt-20 font-bold text-center text-gray-900 dark:text-white mb-10">
+      <h2 className="text-4xl pt-20 font-bold text-center text-gray-900 dark:text-white mb-10">
         Total User's  {users.length}
         <hr className="w-1/3 border-t-4 border-gray-600 mx-auto mt-4" />
       </h2>
 
       {/* USERS GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-10">
         {users.map((user) => (
           <div
             key={user._id}
