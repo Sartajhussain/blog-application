@@ -21,9 +21,9 @@ const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 8000;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
-// ==============================
-// CORS
-// ==============================
+/* =========================
+   CORS
+========================= */
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
@@ -33,25 +33,27 @@ const allowedOrigins = [
   "https://blog-application-774e.onrender.com",
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    callback(null, true);
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      callback(null, true);
+    },
+    credentials: true,
+  })
+);
 
-// ==============================
-// Middlewares
-// ==============================
+/* =========================
+   Middlewares
+========================= */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ==============================
-// Rate limit
-// ==============================
+/* =========================
+   RATE LIMIT (contact)
+========================= */
 const contactLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 5,
@@ -61,37 +63,41 @@ const contactLimiter = rateLimit({
   },
 });
 
-// ==============================
-// API ROUTES
-// ==============================
+/* =========================
+   API ROUTES
+========================= */
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/blog", blogRoutes);
 app.use("/api/v1/comment", commentRoutes);
 app.use("/api/v1/contact", contactLimiter, contactRoutes);
 
-// ==============================
-// FRONTEND (FIXED SAFE VERSION)
-// ==============================
+/* =========================
+   FRONTEND SERVE (SAFE FIX)
+========================= */
 
+// IMPORTANT: Render pe dist path same container me hota hai
 const distPath = path.join(__dirname, "../frontend/dist");
 const indexPath = path.join(distPath, "index.html");
 
-// static files serve always
-app.use(express.static(distPath));
+const isProduction = NODE_ENV === "production";
 
-// SPA fallback (React Router)
-app.get("*", (req, res) => {
-  if (fs.existsSync(indexPath)) {
-    res.sendFile(indexPath);
-  } else {
-    console.log("❌ Frontend not built. Run npm run build");
-    res.status(404).send("Frontend not available");
+/* serve static files only if dist exists */
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+}
+
+/* SPA fallback (IMPORTANT FIX for Cannot GET /) */
+app.get(/.*/, (req, res) => {
+  if (isProduction && fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
   }
+
+  return res.status(404).send("Frontend not available / not built");
 });
 
-// ==============================
-// START SERVER
-// ==============================
+/* =========================
+   DB + SERVER START
+========================= */
 app.listen(PORT, async () => {
   try {
     await connectDb();
