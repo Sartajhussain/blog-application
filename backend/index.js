@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 8000;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
 // ==============================
-// ✅ CORS Configuration (UNCHANGED)
+// CORS
 // ==============================
 const allowedOrigins = [
   "http://localhost:5173",
@@ -35,34 +35,23 @@ const allowedOrigins = [
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    if (NODE_ENV === "development") {
-      return callback(null, true);
-    }
-
-    console.log("ℹ️ CORS request from:", origin);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (NODE_ENV === "development") return callback(null, true);
     callback(null, true);
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  exposedHeaders: ["Set-Cookie"],
 }));
 
 // ==============================
-// ✅ Middlewares
+// Middlewares
 // ==============================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // ==============================
-// ❗ RATE LIMIT (safe)
- // ==============================
+// Rate limit
+// ==============================
 const contactLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 5,
@@ -73,7 +62,7 @@ const contactLimiter = rateLimit({
 });
 
 // ==============================
-// ✅ API Routes
+// API ROUTES
 // ==============================
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/blog", blogRoutes);
@@ -81,29 +70,37 @@ app.use("/api/v1/comment", commentRoutes);
 app.use("/api/v1/contact", contactLimiter, contactRoutes);
 
 // ==============================
-// ✅ FRONTEND SERVE (FIXED SAFE VERSION)
+// FRONTEND SAFE SERVE (IMPORTANT FIX)
 // ==============================
 
 const distPath = path.join(__dirname, "../frontend/dist");
-console.log("📁 Looking for frontend dist at:", distPath);
 
-if (NODE_ENV === "production") {
+// 👉 sirf tab serve karo jab dist exist kare
+if (NODE_ENV === "production" && fsExists(distPath)) {
+
   app.use(express.static(distPath));
 
   app.get("*", (req, res) => {
     res.sendFile(path.join(distPath, "index.html"));
   });
+
+} else {
+  console.log("⚠️ Frontend not served (dev mode or dist missing)");
 }
 
 // ==============================
-// ✅ START SERVER
+// helper check
+// ==============================
+import fs from "fs";
+function fsExists(p) {
+  return fs.existsSync(p);
+}
+
+// ==============================
+// START SERVER
 // ==============================
 app.listen(PORT, async () => {
-  try {
-    await connectDb();
-    console.log(`✅ Server running on port ${PORT}`);
-    console.log(`🌍 Mode: ${NODE_ENV}`);
-  } catch (error) {
-    console.error("❌ DB Connection Failed:", error);
-  }
+  await connectDb();
+  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`🌍 Mode: ${NODE_ENV}`);
 });
