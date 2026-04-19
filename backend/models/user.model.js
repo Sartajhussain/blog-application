@@ -47,6 +47,10 @@ const userschema = new mongoose.Schema(
         otpExpires: {
             type: Date,
         },
+        isOnline: {
+            type: Boolean,
+            default: false
+        },
     },
 
     { timestamps: true }

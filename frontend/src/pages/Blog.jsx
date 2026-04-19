@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -14,9 +14,13 @@ const Blog = () => {
 
   const blog = useSelector((state) => state.blog?.blog || []);
 
-  // FETCH BLOGS
+  const [loading, setLoading] = useState(true);
+
+  // ================= FETCH BLOGS =================
   const getOwnBlogs = async () => {
     try {
+      setLoading(true);
+
       const res = await axios.get(
         `${API_BASE_URL}/api/v1/blog/my-blogs`,
         { withCredentials: true }
@@ -27,10 +31,13 @@ const Blog = () => {
       }
     } catch (error) {
       console.log(error);
+      toast.error("Error fetching blogs");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // DELETE BLOG
+  // ================= DELETE BLOG =================
   const deleteBlogHandler = async (id) => {
     if (!window.confirm("Are you sure you want to delete this blog?")) return;
 
@@ -65,9 +72,27 @@ const Blog = () => {
     e.target.src = userimg;
   };
 
+  // ================= USE EFFECT =================
   useEffect(() => {
+    dispatch(setBlog([])); // 🔥 clear old blogs (important)
     getOwnBlogs();
   }, []);
+
+  // ================= LOADING UI =================
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-24 px-4">
+        <div className="max-w-5xl md:ml-[310px] mx-auto space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="h-20 bg-gray-300 dark:bg-gray-700 animate-pulse rounded-lg"
+            ></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-24 pb-24 md:pb-0 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900">
@@ -104,7 +129,6 @@ const Blog = () => {
                   >
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-4">
-
                         <img
                           src={b.thumbnail || userimg}
                           alt={b.title}
@@ -118,7 +142,6 @@ const Blog = () => {
                         >
                           {b.title}
                         </span>
-
                       </div>
                     </td>
 
@@ -160,7 +183,7 @@ const Blog = () => {
           </table>
         </div>
 
-        {/* ================= MOBILE CARD VIEW ================= */}
+        {/* ================= MOBILE VIEW ================= */}
         <div className="md:hidden space-y-4">
           {blog.length === 0 ? (
             <p className="text-center text-gray-500">
@@ -173,7 +196,6 @@ const Blog = () => {
                 className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow"
               >
                 <div className="flex gap-4">
-
                   <img
                     src={b.thumbnail || userimg}
                     alt={b.title}
