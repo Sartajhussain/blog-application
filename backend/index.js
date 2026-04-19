@@ -88,7 +88,7 @@ if (NODE_ENV === "production") {
 }
 
 // ==============================
-// ✅ START SERVER
+// ✅ START SERVERS
 // ==============================
 
 app.listen(PORT, async () => {
