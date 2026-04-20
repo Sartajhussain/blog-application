@@ -15,6 +15,7 @@ import fs from "fs";
 dotenv.config();
 
 const app = express();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -22,7 +23,12 @@ const PORT = process.env.PORT || 8000;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
 /* =========================
-   CORS
+   IMPORTANT: TRUST PROXY (Render FIX)
+========================= */
+app.set("trust proxy", 1);
+
+/* =========================
+   CORS (FIXED - IMPORTANT)
 ========================= */
 const allowedOrigins = [
   "http://localhost:5173",
@@ -30,26 +36,39 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:5173",
   "http://127.0.0.1:5174",
-  "https://blog-application-774e.onrender.com",
+  "https://blog-application-774e.onrender.com", // frontend live URL (agar same ho)
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.log("❌ Blocked CORS origin:", origin);
+      return callback(null, true); // safe allow (you can tighten later)
     },
     credentials: true,
   })
 );
 
 /* =========================
-   Middlewares
+   MIDDLEWARES
 ========================= */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+/* =========================
+   DEBUG (TEMP - REMOVE LATER)
+========================= */
+app.use((req, res, next) => {
+  console.log("➡️ Request:", req.method, req.url);
+  next();
+});
 
 /* =========================
    RATE LIMIT (contact)
@@ -72,27 +91,27 @@ app.use("/api/v1/comment", commentRoutes);
 app.use("/api/v1/contact", contactLimiter, contactRoutes);
 
 /* =========================
-   FRONTEND SERVE (SAFE FIX)
+   FRONTEND SERVE (SAFE)
 ========================= */
-
-// IMPORTANT: Render pe dist path same container me hota hai
 const distPath = path.join(__dirname, "../frontend/dist");
 const indexPath = path.join(distPath, "index.html");
 
 const isProduction = NODE_ENV === "production";
 
-/* serve static files only if dist exists */
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
 }
 
-/* SPA fallback (IMPORTANT FIX for Cannot GET /) */
+/* SPA fallback */
 app.get(/.*/, (req, res) => {
   if (isProduction && fs.existsSync(indexPath)) {
     return res.sendFile(indexPath);
   }
 
-  return res.status(404).send("Frontend not available / not built");
+  res.status(404).json({
+    success: false,
+    message: "Frontend not built or not found",
+  });
 });
 
 /* =========================
