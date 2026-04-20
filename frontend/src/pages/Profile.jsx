@@ -20,6 +20,11 @@ const Profile = () => {
   const { user, loading } = useSelector(store => store.auth);
   const dispatch = useDispatch();
 
+  // State for blogs and comments stats
+  const [totalBlogs, setTotalBlogs] = useState(0);
+  const [totalComments, setTotalComments] = useState(0);
+  const [statsLoading, setStatsLoading] = useState(true);
+
   const [input, setInput] = useState({
     firstName: "",
     lastName: "",
@@ -70,6 +75,71 @@ const Profile = () => {
       fetchProfile();
     }
   }, []);
+
+  // ✅ Fetch total blogs and total comments - CORRECTED ENDPOINTS
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!user?._id) return;
+      
+      try {
+        setStatsLoading(true);
+        
+        // Fetch current user's blogs using my-blogs endpoint
+        const blogsRes = await axios.get(
+          `${API_BASE_URL}/api/v1/blog/my-blogs`,
+          { withCredentials: true }
+        );
+        
+        if (blogsRes.data.success) {
+          setTotalBlogs(blogsRes.data.blogs?.length || 0);
+          console.log("Total blogs fetched:", blogsRes.data.blogs?.length);
+        }
+        
+        // Fetch current user's comments - Assuming similar endpoint exists
+        // Agar comments ka endpoint "/api/v1/comment/my-comments" hai toh ye use karo
+        try {
+          const commentsRes = await axios.get(
+            `${API_BASE_URL}/api/v1/comment/my-comments`,
+            { withCredentials: true }
+          );
+          
+          if (commentsRes.data.success) {
+            setTotalComments(commentsRes.data.comments?.length || 0);
+            console.log("Total comments fetched:", commentsRes.data.comments?.length);
+          }
+        } catch (commentError) {
+          // Agar comment endpoint nahi hai toh handle karo
+          console.log("Comments endpoint not found, trying alternative...");
+          // Alternative: Saare blogs fetch karke unke comments count karo
+          if (blogsRes.data.success && blogsRes.data.blogs) {
+            let totalCommentCount = 0;
+            for (const blog of blogsRes.data.blogs) {
+              try {
+                const blogCommentsRes = await axios.get(
+                  `${API_BASE_URL}/api/v1/comment/blog/${blog._id}`,
+                  { withCredentials: true }
+                );
+                if (blogCommentsRes.data.success) {
+                  totalCommentCount += blogCommentsRes.data.comments?.length || 0;
+                }
+              } catch (err) {
+                console.log(`Error fetching comments for blog ${blog._id}`);
+              }
+            }
+            setTotalComments(totalCommentCount);
+            console.log("Total comments from all blogs:", totalCommentCount);
+          }
+        }
+        
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, [user]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -229,12 +299,16 @@ px-4 md:px-8 py-12">
               </div>
 
               <div className="bg-gray-100 dark:bg-slate-700 rounded-xl p-5 text-center">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">3+</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                  {statsLoading ? "..." : totalBlogs}
+                </h3>
                 <p className="text-gray-500 dark:text-gray-300 text-sm">Total Blogs</p>
               </div>
 
               <div className="bg-gray-100 dark:bg-slate-700 rounded-xl p-5 text-center">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">100+</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                  {statsLoading ? "..." : totalComments}
+                </h3>
                 <p className="text-gray-500 dark:text-gray-300 text-sm">Comments</p>
               </div>
 

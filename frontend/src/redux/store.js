@@ -2,6 +2,7 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import authSlice from "./authSlice";
 import themeSlice from "./themeSlice";
 import blogSlice from "./blogSlice";
+import commentReducer from "./commentSlice";
 
 import {
   persistStore,
@@ -15,6 +16,7 @@ import {
 } from "redux-persist";
 
 import storage from "redux-persist/lib/storage";
+import { comment } from "postcss";
 
 // ===============================
 // Root Reducer
@@ -23,6 +25,7 @@ const rootReducer = combineReducers({
   auth: authSlice,
   theme: themeSlice,
   blog: blogSlice,
+  comment: commentReducer, // ✅ ADD COMMENT REDUCER
 });
 
 // ===============================

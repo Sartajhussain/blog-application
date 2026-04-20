@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaHeart, FaRegHeart, FaTrash, FaPencilAlt, FaEllipsisV } from "react-icons/fa";
 import axios from "axios";
 import toast from "react-hot-toast";
-import userimg from "../assets/userprofile.png";
-import { API_BASE_URL } from "../utils/api";
 
 const CommentItem = ({ comment, currentUserId, onCommentUpdated, onCommentDeleted }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -30,7 +28,7 @@ const CommentItem = ({ comment, currentUserId, onCommentUpdated, onCommentDelete
 
     try {
       const { data } = await axios.put(
-        `${API_BASE_URL}/api/v1/comment/${comment._id}`,
+        `http://localhost:8000/api/v1/comment/${comment._id}`,
         { text: editText },
         { withCredentials: true }
       );
@@ -52,7 +50,7 @@ const CommentItem = ({ comment, currentUserId, onCommentUpdated, onCommentDelete
 
     try {
       const { data } = await axios.delete(
-        `${API_BASE_URL}/api/v1/comment/${comment._id}`,
+        `http://localhost:8000/api/v1/comment/${comment._id}`,
         { withCredentials: true }
       );
 
@@ -70,10 +68,9 @@ const CommentItem = ({ comment, currentUserId, onCommentUpdated, onCommentDelete
     <div className="flex gap-3 relative">
       {/* User Avatar */}
       <img
-        src={comment.user?.profilePic || userimg}
-        alt={comment.user?.firstName || "User"}
-        className="w-10 h-10 rounded-full object-cover"
-        onError={(e) => (e.target.src = userimg)}
+        src={comment.user?.profilePic}
+        alt=""
+        className="w-10 h-10 rounded-full"
       />
 
       <div className="flex-1 space-y-2">
