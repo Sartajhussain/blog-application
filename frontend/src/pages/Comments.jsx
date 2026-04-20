@@ -4,19 +4,21 @@ import { ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../utils/api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const Comments = () => {
   const [allComments, setAllComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [commentsLoading, setCommentsLoading] = useState(false);
 
   const fetchComments = async () => {
     try {
       setLoading(true);
 
       const res = await axios.get(
-        `${API_BASE_URL}/api/v1/comment/all?page=${page}`,  
+        `${API_BASE_URL}/api/v1/comment/all?page=${page}`,
         { withCredentials: true }
       );
 
@@ -49,8 +51,12 @@ const Comments = () => {
       rounded-xl overflow-hidden">
 
         {loading ? (
-          <div className="p-6 text-center text-gray-500">
-            Loading comments...
+          <div className="p-6 flex flex-col items-center justify-center gap-2 text-gray-500">
+
+            <Loader2 className="w-5 h-5 animate-spin" />
+
+            <p className="text-xs">Loading comments...</p>
+
           </div>
         ) : allComments.length === 0 ? (
           <div className="p-6 text-center text-gray-500">
@@ -136,44 +142,44 @@ const Comments = () => {
 
             </table>
 
-            
 
-<div className="flex items-center justify-center mt-6">
 
-  <div className="flex items-center gap-2 px-3 py-1.5 
+            <div className="flex items-center justify-center mt-6">
+
+              <div className="flex items-center gap-2 px-3 py-1.5 
   rounded-full border border-gray-200 dark:border-slate-700 
   bg-white/70 dark:bg-slate-800/60 backdrop-blur-md shadow-sm">
 
-    {/* PREV */}
-    <button
-      disabled={page === 1}
-      onClick={() => setPage(page - 1)}
-      className="p-1.5 rounded-full 
+                {/* PREV */}
+                <button
+                  disabled={page === 1}
+                  onClick={() => setPage(page - 1)}
+                  className="p-1.5 rounded-full 
       hover:bg-gray-100 dark:hover:bg-slate-700 
       disabled:opacity-40 transition"
-    >
-      <ChevronLeft size={16} />
-    </button>
+                >
+                  <ChevronLeft size={16} />
+                </button>
 
-    {/* PAGE INFO */}
-    <span className="text-xs font-medium text-gray-600 dark:text-gray-300 px-2">
-      {page} / {totalPages}
-    </span>
+                {/* PAGE INFO */}
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-300 px-2">
+                  {page} / {totalPages}
+                </span>
 
-    {/* NEXT */}
-    <button
-      disabled={page === totalPages}
-      onClick={() => setPage(page + 1)}
-      className="p-1.5 rounded-full 
+                {/* NEXT */}
+                <button
+                  disabled={page === totalPages}
+                  onClick={() => setPage(page + 1)}
+                  className="p-1.5 rounded-full 
       hover:bg-gray-100 dark:hover:bg-slate-700 
       disabled:opacity-40 transition"
-    >
-      <ChevronRight size={16} />
-    </button>
+                >
+                  <ChevronRight size={16} />
+                </button>
 
-  </div>
+              </div>
 
-</div>
+            </div>
 
           </div>
 

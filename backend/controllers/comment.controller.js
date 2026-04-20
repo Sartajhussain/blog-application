@@ -63,7 +63,7 @@ export const getAllComments = async (req, res) => {
   try {
     // page & limit query se lo
     const page = parseInt(req.query.page) || 1;
-    const limit = 10; // 🔥 fixed 10 comments per page
+    const limit = 5; // 🔥 fixed 5 comments per page
     const skip = (page - 1) * limit;
 
     // total count

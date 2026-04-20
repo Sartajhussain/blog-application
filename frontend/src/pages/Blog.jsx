@@ -13,10 +13,9 @@ const Blog = () => {
   const navigate = useNavigate();
 
   const blog = useSelector((state) => state.blog?.blog || []);
-
   const [loading, setLoading] = useState(true);
 
-  // ================= FETCH BLOGS =================
+  /* ================= FETCH BLOGS ================= */
   const getOwnBlogs = async () => {
     try {
       setLoading(true);
@@ -37,9 +36,9 @@ const Blog = () => {
     }
   };
 
-  // ================= DELETE BLOG =================
+  /* ================= DELETE BLOG ================= */
   const deleteBlogHandler = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this blog?")) return;
+    if (!window.confirm("Delete this blog?")) return;
 
     try {
       const res = await fetch(
@@ -53,11 +52,11 @@ const Blog = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.message || "Blog not found");
+        toast.error(data.message || "Delete failed");
         return;
       }
 
-      toast.success(data.message || "Blog deleted successfully");
+      toast.success("Blog deleted");
 
       const updatedBlogs = blog.filter((b) => b._id !== id);
       dispatch(setBlog(updatedBlogs));
@@ -67,57 +66,70 @@ const Blog = () => {
     }
   };
 
+  /* ================= IMAGE FALLBACK ================= */
   const handleImageError = (e) => {
     e.target.onerror = null;
     e.target.src = userimg;
   };
 
-  // ================= USE EFFECT =================
+  /* ================= USE EFFECT ================= */
   useEffect(() => {
-    dispatch(setBlog([])); // 🔥 clear old blogs (important)
+    dispatch(setBlog([]));
     getOwnBlogs();
   }, []);
 
-  // ================= LOADING UI =================
+  /* ================= LOADING ================= */
   if (loading) {
     return (
       <div className="min-h-screen pt-24 px-4">
-        <div className="max-w-5xl md:ml-[310px] mx-auto space-y-4">
+        <div className="max-w-5xl md:ml-[310px] mx-auto space-y-3">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-20 bg-gray-300 dark:bg-gray-700 animate-pulse rounded-lg"
-            ></div>
+              className="h-16 rounded-md bg-gray-200 dark:bg-slate-700 animate-pulse"
+            />
           ))}
         </div>
       </div>
     );
   }
 
+  /* ================= UI ================= */
   return (
-    <div className="min-h-screen pt-24 pb-24 md:pb-0 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-5xl md:ml-[310px] mx-auto bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-lg">
+    <div className="min-h-screen pt-24 pb-24 md:pb-0 px-4 bg-gray-50 dark:bg-gray-900">
 
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">
-          Blog List
-        </h1>
+      <div className="max-w-5xl md:ml-[310px] mx-auto 
+      bg-white/80 dark:bg-slate-800/80 
+      backdrop-blur-md 
+      p-4 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
 
-        {/* ================= DESKTOP TABLE ================= */}
+        {/* HEADER */}
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+            Blogs
+          </h1>
+          <span className="text-xs text-gray-500">
+            {blog.length} items
+          </span>
+        </div>
+
+        {/* ================= DESKTOP ================= */}
         <div className="hidden md:block overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-sm">
+
             <thead>
-              <tr className="border-b border-gray-300 dark:border-gray-700">
-                <th className="py-3 px-4">Title</th>
-                <th className="py-3 px-4">Category</th>
-                <th className="py-3 px-4">Date</th>
-                <th className="py-3 px-4">Action</th>
+              <tr className="border-b border-gray-200 dark:border-slate-700 text-xs text-gray-500">
+                <th className="py-2 px-3 text-left">Blog</th>
+                <th className="py-2 px-3 text-left">Category</th>
+                <th className="py-2 px-3 text-left">Date</th>
+                <th className="py-2 px-3 text-right">Actions</th>
               </tr>
             </thead>
 
             <tbody>
               {blog.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="text-center py-6">
+                  <td colSpan="4" className="text-center py-6 text-xs text-gray-500">
                     No blogs found
                   </td>
                 </tr>
@@ -125,123 +137,137 @@ const Blog = () => {
                 blog.map((b) => (
                   <tr
                     key={b._id}
-                    className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                    className="border-b border-gray-100 dark:border-slate-700 
+                    hover:bg-gray-50 dark:hover:bg-slate-800 transition"
                   >
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-4">
+
+                    {/* BLOG */}
+                    <td className="py-2 px-3">
+                      <div className="flex items-center gap-2">
+
                         <img
                           src={b.thumbnail || userimg}
                           alt={b.title}
-                          className="w-14 h-14 object-cover rounded-lg"
+                          className="w-10 h-10 object-cover rounded-md"
                           onError={handleImageError}
                         />
 
-                        <span
-                          className="font-medium capitalize hover:underline cursor-pointer"
-                          onClick={() => navigate(`/view-blog/${b._id}`)}
-                        >
-                          {b.title}
-                        </span>
+                        <div>
+                          <p
+                            onClick={() => navigate(`/view-blog/${b._id}`)}
+                            className="text-sm font-medium text-gray-800 dark:text-gray-200 cursor-pointer hover:underline line-clamp-1"
+                          >
+                            {b.title}
+                          </p>
+
+                          {/* <span className="text-[11px] text-gray-400">
+                            #{b._id.slice(-6)}
+                          </span> */}
+                        </div>
+
                       </div>
                     </td>
 
-                    <td className="py-4 px-4 capitalize">
+                    {/* CATEGORY */}
+                    <td className="py-2 px-3 text-xs text-gray-500 capitalize">
                       {b.category}
                     </td>
 
-                    <td className="py-4 px-4">
+                    {/* DATE */}
+                    <td className="py-2 px-3 text-xs text-gray-400">
                       {b.createdAt
                         ? new Date(b.createdAt).toLocaleDateString()
                         : "N/A"}
                     </td>
 
-                    <td className="py-4 px-4">
-                      <div className="flex gap-3">
+                    {/* ACTIONS */}
+                    <td className="py-2 px-3">
+                      <div className="flex justify-end gap-2">
 
                         <button
-                          className="px-3 py-1 text-sm bg-gray-700 text-white rounded-md hover:bg-black transition flex items-center gap-1"
                           onClick={() =>
                             navigate(`/dashboard/write-blog/${b._id}`)
                           }
+                          className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-slate-700 transition"
                         >
-                          <FiEdit2 size={14} /> Edit
+                          <FiEdit2 size={14} />
                         </button>
 
                         <button
-                          className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition flex items-center gap-1"
                           onClick={() => deleteBlogHandler(b._id)}
+                          className="p-1.5 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 transition"
                         >
-                          <FiTrash2 size={14} /> Delete
+                          <FiTrash2 size={14} className="text-red-500" />
                         </button>
 
                       </div>
                     </td>
+
                   </tr>
                 ))
               )}
             </tbody>
+
           </table>
         </div>
 
-        {/* ================= MOBILE VIEW ================= */}
-        <div className="md:hidden space-y-4">
+        {/* ================= MOBILE ================= */}
+        <div className="md:hidden space-y-2">
           {blog.length === 0 ? (
-            <p className="text-center text-gray-500">
+            <p className="text-center text-xs text-gray-500">
               No blogs found
             </p>
           ) : (
             blog.map((b) => (
               <div
                 key={b._id}
-                className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow"
+                className="flex items-center justify-between gap-2 
+                p-3 rounded-lg border border-gray-200 dark:border-slate-700 
+                bg-white dark:bg-slate-800"
               >
-                <div className="flex gap-4">
+
+                <div className="flex items-center gap-2 flex-1">
+
                   <img
                     src={b.thumbnail || userimg}
                     alt={b.title}
-                    className="w-16 h-16 object-cover rounded-lg"
+                    className="w-10 h-10 rounded-md object-cover"
                     onError={handleImageError}
                   />
 
                   <div className="flex-1">
-                    <h2
-                      className="font-semibold capitalize cursor-pointer hover:underline"
+                    <p
                       onClick={() => navigate(`/view-blog/${b._id}`)}
+                      className="text-sm font-medium text-gray-800 dark:text-gray-200 line-clamp-1"
                     >
                       {b.title}
-                    </h2>
-
-                    <p className="text-sm text-gray-600 dark:text-gray-300 capitalize">
-                      {b.category}
                     </p>
 
-                    <p className="text-sm text-gray-500">
+                    <p className="text-[11px] text-gray-500">
+                      {b.category} •{" "}
                       {b.createdAt
                         ? new Date(b.createdAt).toLocaleDateString()
-                        : "N/A"}
+                        : ""}
                     </p>
                   </div>
+
                 </div>
 
-                <div className="flex gap-3 mt-4">
-
-                  <button
-                    className="flex-1 py-2 text-sm bg-gray-700 text-white rounded-md hover:bg-black transition flex items-center justify-center gap-1"
+                <div className="flex gap-2">
+                  <FiEdit2
+                    size={14}
+                    className="text-gray-600"
                     onClick={() =>
                       navigate(`/dashboard/write-blog/${b._id}`)
                     }
-                  >
-                    <FiEdit2 size={14} /> Edit
-                  </button>
-
-                  <button
-                    className="flex-1 py-2 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition flex items-center justify-center gap-1"
+                  />
+                  <FiTrash2
+                    size={14}
+                    className="text-red-500"
                     onClick={() => deleteBlogHandler(b._id)}
-                  >
-                    <FiTrash2 size={14} /> Delete
-                  </button>
-
+                  />
                 </div>
+
               </div>
             ))
           )}
