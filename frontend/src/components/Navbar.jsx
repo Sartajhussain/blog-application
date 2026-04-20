@@ -510,7 +510,7 @@ border border-gray-200 dark:border-gray-700
             About
           </Link>
           <Link
-            to="/comments"
+            to="/dashboard/comments"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg
             
